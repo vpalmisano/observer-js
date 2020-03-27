@@ -1,4 +1,4 @@
-# Wobserver WebRTC Extractor Clients
-Extractor Development Toolkits for WebRTC Measurements
+# Wobserver WebRTC Extractor
+Extractor Development Toolkits for WebRTC Samples
 
-In this repository client libraries 
+
