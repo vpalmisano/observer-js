@@ -1,3 +1,4 @@
 import Wobserver from './wobserver.core'
+import StatsParser from './wobserver.plugins/stats.parser'
 
-export { Wobserver }
+export default { init: Wobserver, StatsParser }

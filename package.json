@@ -5,20 +5,29 @@
   "main": "src/index.js",
   "dependencies": {
     "loglevel": "^1.6.7",
-    "loglevel-plugin-prefix": "^0.8.4"
+    "loglevel-plugin-prefix": "^0.8.4",
+    "rxjs": "^6.5.5",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
+    "@types/uuid": "^7.0.3",
     "@types/webrtc": "0.0.26",
+    "clean-webpack-plugin": "^3.0.0",
     "nodemon": "^2.0.3",
     "ts-node": "^8.8.2",
     "tslint": "^6.1.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "debug": "ts-node src/index.ts"
+    "debug": "ts-node src/index.ts",
+    "build-library": "npm run build && webpack --mode=development && cp -r ./dist/wobserver-lib.* ./__test__/pc1/dist/",
+    "run-demo": "pushd __test__/pc1 &&  python2 -m SimpleHTTPServer 8080 && popd"
   },
   "license": "MIT"
 }
