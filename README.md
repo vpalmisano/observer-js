@@ -31,7 +31,7 @@ Extractor Development Toolkits for WebRTC Samples
 
   - Add the package in your package.json
     - `"@observertc/webextrapp-lib": "0.0.3"`
-  - Create .npmrc in the project folder and add our registry
+  - Create `.npmrc` in the project folder and add our registry
     - `@observertc:registry=https://npm.pkg.github.com/`
   - Install the package
     - `npm install`
