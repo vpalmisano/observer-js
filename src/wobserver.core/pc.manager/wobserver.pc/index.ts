@@ -1,4 +1,3 @@
-import logger from '../../../wobserver.logger'
 import { WobserverPlugin } from '../../../wobserver.plugins'
 import StatsParser from '../../../wobserver.plugins/stats.parser'
 import Queue from '../../wobserver.datastructure/queue'
@@ -17,20 +16,24 @@ class WobserverPC {
         return this.pc
     }
 
+    public getPcId() {
+        return this.id
+    }
+
+    public getStatsQueue() {
+        return this.statsQueue
+    }
+
     public async execute(pluginList: WobserverPlugin[]): Promise<any> {
         for (const curPlugin of pluginList) {
             const result = await curPlugin?.execute(this)
-            if (result && curPlugin instanceof StatsParser) {
+            if (curPlugin instanceof StatsParser && result) {
                 this.statsQueue.add(result)
-                console.warn(result)
-            } else {
-                logger.warn('ignore plugin execution. something is not right!')
             }
         }
     }
-
-    public getStats(): any {
-        return this.statsQueue.pool()
+    public dispose() {
+        this.statsQueue.clear()
     }
 }
 
