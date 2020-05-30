@@ -36,5 +36,6 @@ Extractor Development Toolkits for WebRTC Samples
   - Install the package
     - `npm install`
 
-- ### How to use the library
+- ### How to run demo
+  - `npm run run-demo` and access the server from http://localhost:9090
  
