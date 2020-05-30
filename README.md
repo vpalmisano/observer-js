@@ -36,6 +36,5 @@ Extractor Development Toolkits for WebRTC Samples
   - Install the package
     - `npm install`
 
-* ### How to use the library
-
-  * 
+- ### How to use the library
+ 
