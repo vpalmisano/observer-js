@@ -109,7 +109,7 @@ export interface OutboundRTP {
     retransmittedPacketsSent: number
     ssrc: number
     timestamp: number
-    trackId: number
+    trackId: string
     transportId: string
     encoderImplementation: string
     firCount: number
