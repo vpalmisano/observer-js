@@ -45,7 +45,7 @@ export interface RemoteCandidate {
     priority: number
     protocol: 'udp' | 'tcp'
     timestamp: number
-    transportId: 'string'
+    transportId: string
     type: 'remote-candidate'
 }
 
@@ -172,22 +172,19 @@ export interface RemoteInboundRTP {
     type: 'remote-inbound-rtp'
 }
 
-export interface StatsPayload {
-    peerConnectionId: string
-    receiverStats: [
-        CandidatePair |
+export interface ObserverRTCStats {
+    rtcStats: CandidatePair |
         RemoteCandidate |
         LocalCandidate |
         Track |
-        InboundRTP
-    ],
-    senderStats: [
+        InboundRTP |
         MediaSource |
-        CandidatePair |
-        RemoteCandidate |
-        LocalCandidate |
-        Track |
         OutboundRTP |
         RemoteInboundRTP
-    ]
+}
+
+export interface PeerConnectionSample {
+    peerConnectionId: string
+    receiverStats: [ObserverRTCStats],
+    senderStats: [ObserverRTCStats]
 }
