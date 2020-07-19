@@ -194,6 +194,8 @@ export interface ObserveRTCStats {
 
 export interface PeerConnectionSample {
     peerConnectionId: string
+    browserId: string
+    timeZoneOffsetInMinute: number
     receiverStats: [ObserveRTCStats]
     senderStats: [ObserveRTCStats]
     iceStats: [ObserveRTCCIceStats]
