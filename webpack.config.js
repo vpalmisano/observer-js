@@ -15,7 +15,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
+        filename: exportCallStats === 'true' ? 'observer.js': '[name].js',
         library: libraryName,
         umdNamedDefine: true,
         libraryExport: "default",
