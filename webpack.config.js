@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const libraryConfig = require('./library.config/index.json')
 const {version} = require('./package.json')
 
@@ -24,7 +23,6 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
-    // devtool: 'source-map',
     module: {
         rules: [
             {
@@ -34,13 +32,9 @@ module.exports = {
             },
         ],
     },
+    devtool: 'inline-source-map',
     optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                include: /\.min\.js$/,
-                sourceMap: false,
-            }),
-        ]
+        minimize: true
     },
     plugins: [
         new webpack.ProgressPlugin(),
