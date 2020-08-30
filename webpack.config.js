@@ -15,7 +15,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: exportCallStats === 'true' ? 'observer.js': '[name].js',
+        filename: exportCallStats === 'true' ? 'observer.min.js': '[name].js',
         library: libraryName,
         umdNamedDefine: true,
         libraryExport: "default",
@@ -24,7 +24,7 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
-    devtool: 'source-map',
+    // devtool: 'source-map',
     module: {
         rules: [
             {
@@ -38,7 +38,7 @@ module.exports = {
         minimizer: [
             new UglifyJsPlugin({
                 include: /\.min\.js$/,
-                sourceMap: true,
+                sourceMap: false,
             }),
         ]
     },

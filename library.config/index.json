@@ -1,10 +1,10 @@
 {
-  "exportCallstats": false,
-  "libraryName": "WebextraApp",
+  "exportCallstats": true,
+  "libraryName": "callstats",
   "poolingIntervalMs": 1000,
-  "debug": true,
+  "debug": false,
   "wsServer": {
-    "URL": "wss://meet.cogint.ai:7879/ws/",
+    "URL": "wss://observer.rtc.help:7880/ws/",
     "UUID": "86ed98c6-b001-48bb-b31e-da638b979c72"
   }
 }
