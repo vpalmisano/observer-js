@@ -4,8 +4,8 @@ class Integrator {
         this.statsSender = new ObserverRTC.StatsSender(websocketServer)
         this.init()
     }
-    init() {
-        this.wobserver = new ObserverRTC.Builder()
+    init(poolingInterval = 1000) {
+        this.wobserver = new ObserverRTC.Builder(poolingInterval)
             .attachPlugin(this.statsParser)
             .attachPlugin(this.statsSender)
             .build()

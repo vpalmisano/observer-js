@@ -469,8 +469,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __importDefault(__webpack_require__(/*! ../index */ "./build/observer.manager/index.js"));
 class ObserverBuilder {
-    constructor() {
-        this.instance = new index_1.default();
+    constructor(poolingInterval = 1000) {
+        this.instance = new index_1.default(poolingInterval);
     }
     attachPlugin(plugin) {
         this.instance.attachPlugin(plugin);
@@ -513,7 +513,7 @@ class Observer {
             new connection_monitor_plugin_1.default(),
         ];
         // @ts-ignore
-        console.info('using library version', "0.2.8");
+        console.info('using library version', "0.2.9");
         this.intervalWorker = new observer_interval_worker_1.default(poolingInterval);
     }
     attachPlugin(plugin) {

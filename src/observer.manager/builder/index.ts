@@ -2,7 +2,10 @@ import { ObserverPlugin } from '../../observer.plugins/base.plugin'
 import Observer from '../index'
 
 class ObserverBuilder {
-    private readonly instance: Observer = new Observer()
+    private readonly instance: Observer
+    constructor(poolingInterval = 1000) {
+        this.instance = new Observer(poolingInterval)
+    }
     attachPlugin(plugin: ObserverPlugin): ObserverBuilder {
         this.instance.attachPlugin(plugin)
         return this
