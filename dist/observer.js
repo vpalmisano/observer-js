@@ -514,7 +514,7 @@ class Observer {
             new connection_monitor_plugin_1.default(),
         ];
         // @ts-ignore
-        console.info('using library version', "0.2.10");
+        console.info('using library version', "0.2.11");
         this.intervalWorker = new observer_interval_worker_1.default(poolingInterval);
     }
     attachPlugin(plugin) {
@@ -757,7 +757,7 @@ class ConnectionMonitor extends base_plugin_1.ObserverPlugin {
         this.expiredLimit = 10 * 1000; // 10 second
     }
     isExpired(pcState) {
-        if (!((pcState === null || pcState === void 0 ? void 0 : pcState.currentState) in ['closed', 'failed'])) {
+        if (!['closed', 'failed'].includes(pcState.currentState)) {
             return false;
         }
         // connection state is either in closed, or failed state now
