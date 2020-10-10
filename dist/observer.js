@@ -285,15 +285,15 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./build/default.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./build/index.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./build/default.js":
-/*!**************************!*\
-  !*** ./build/default.js ***!
-  \**************************/
+/***/ "./build/index.js":
+/*!************************!*\
+  !*** ./build/index.js ***!
+  \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -306,8 +306,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const builder_1 = __importDefault(__webpack_require__(/*! ./observer.manager/builder */ "./build/observer.manager/builder/index.js"));
 const stats_parser_plugin_1 = __importDefault(__webpack_require__(/*! ./observer.plugins/public/stats.parser.plugin */ "./build/observer.plugins/public/stats.parser.plugin/index.js"));
 const websocket_sender_plugin_1 = __importDefault(__webpack_require__(/*! ./observer.plugins/public/websocket.sender.plugin */ "./build/observer.plugins/public/websocket.sender.plugin/index.js"));
-exports.default = { Builder: builder_1.default, StatsParser: stats_parser_plugin_1.default, StatsSender: websocket_sender_plugin_1.default };
-//# sourceMappingURL=default.js.map
+const parser_util_1 = __importDefault(__webpack_require__(/*! ./observer.utils/parser.util */ "./build/observer.utils/parser.util/index.js"));
+exports.default = { Builder: builder_1.default, StatsParser: stats_parser_plugin_1.default, StatsSender: websocket_sender_plugin_1.default, ParserUtil: parser_util_1.default };
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 
@@ -505,16 +506,15 @@ const connection_monitor_plugin_1 = __importDefault(__webpack_require__(/*! ../o
 class IObserver {
 }
 class Observer {
-    constructor() {
+    constructor(poolingInterval = 1000) {
         this.pcList = [];
         this.pluginList = [
             // internal plugins
             new connection_monitor_plugin_1.default(),
         ];
         // @ts-ignore
-        this.intervalWorker = new observer_interval_worker_1.default(parseInt(typeof POOLING_INTERVAL_MS === 'undefined' ? 1000 : POOLING_INTERVAL_MS, 10));
-        // @ts-ignore
-        console.info('using library version', "0.2.5");
+        console.info('using library version', "0.2.8");
+        this.intervalWorker = new observer_interval_worker_1.default(poolingInterval);
     }
     attachPlugin(plugin) {
         if (this.pluginList.find(item => item.id === plugin.id)) {
@@ -1056,6 +1056,42 @@ class BrowserUtil {
     }
 }
 exports.default = BrowserUtil;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./build/observer.utils/parser.util/index.js":
+/*!***************************************************!*\
+  !*** ./build/observer.utils/parser.util/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class ParserUtil {
+    static parseWsServerUrl(serverURL, serviceUUID, mediaUnitId, statsVersion) {
+        if (!serverURL) {
+            throw Error('server url is undefined');
+        }
+        if (!serviceUUID) {
+            throw Error('service UUID is undefined');
+        }
+        if (!mediaUnitId) {
+            throw Error('media unit id is undefined');
+        }
+        if (!statsVersion) {
+            throw Error('stats version is undefined');
+        }
+        serverURL = `${serverURL.replace(/\/$/, '')}`;
+        serviceUUID = `${serviceUUID.replace(/^\//, '')}`;
+        mediaUnitId = `${mediaUnitId.replace(/^\//, '')}`;
+        statsVersion = `${statsVersion.replace(/^\//, '')}`;
+        return `${serverURL}/${serviceUUID}/${mediaUnitId}/${statsVersion}/json`;
+    }
+}
+exports.default = ParserUtil;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
