@@ -326,7 +326,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Queue {
     constructor() {
         this.q = [];
-        this.maxSize = 120;
+        // just remember last 10 records
+        this.maxSize = 10;
     }
     add(value) {
         this.q.push(value);
@@ -504,6 +505,8 @@ const observer_interval_worker_1 = __importDefault(__webpack_require__(/*! ../ob
 const observer_logger_1 = __importDefault(__webpack_require__(/*! ../observer.logger */ "./build/observer.logger/index.js"));
 const observer_pc_1 = __importDefault(__webpack_require__(/*! ../observer.pc */ "./build/observer.pc/index.js"));
 const connection_monitor_plugin_1 = __importDefault(__webpack_require__(/*! ../observer.plugins/internal/connection.monitor.plugin */ "./build/observer.plugins/internal/connection.monitor.plugin/index.js"));
+const websocket_sender_plugin_1 = __importDefault(__webpack_require__(/*! ../observer.plugins/public/websocket.sender.plugin */ "./build/observer.plugins/public/websocket.sender.plugin/index.js"));
+const observer_usermediahandler_1 = __importDefault(__webpack_require__(/*! ../observer.usermediahandler */ "./build/observer.usermediahandler/index.js"));
 class IObserver {
 }
 class Observer {
@@ -513,9 +516,11 @@ class Observer {
             // internal plugins
             new connection_monitor_plugin_1.default(),
         ];
+        this.userMediaHandler = new observer_usermediahandler_1.default();
         // @ts-ignore
-        console.info('using library version', "0.2.11");
+        console.info('using library version', "0.3.0");
         this.intervalWorker = new observer_interval_worker_1.default(poolingInterval);
+        this.userMediaHandler.overrideUserMedia(this);
     }
     attachPlugin(plugin) {
         if (this.pluginList.find(item => item.id === plugin.id)) {
@@ -556,6 +561,13 @@ class Observer {
     getPcList() {
         return this.pcList;
     }
+    sendUserMediaError(errorMessage) {
+        const currentPlugin = this.pluginList.find((plugin) => plugin instanceof websocket_sender_plugin_1.default);
+        if (currentPlugin) {
+            const senderPlugin = currentPlugin;
+            senderPlugin.sendUserMediaError(errorMessage).catch(null);
+        }
+    }
     // private helper method
     subscribe(currentPC) {
         // is already subscribed
@@ -595,7 +607,8 @@ class ObserverBasePC {
     constructor() {
         this.id = uuid_1.v4();
         this.timeZoneOffsetInMinute = time_util_1.default.getTimeZoneOffsetInMinute();
-        this.statsDb = new in_memory_queue_1.default();
+        this.collectStatsDb = new in_memory_queue_1.default();
+        this.sendStatsDB = new in_memory_queue_1.default();
         this.pcState = new pc_state_1.default();
         observer_singleton_1.default.getBrowserId().then(value => this.browserId = value);
     }
@@ -638,7 +651,7 @@ class ObserverPC extends base_pc_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield (currentPlugin === null || currentPlugin === void 0 ? void 0 : currentPlugin.execute(this));
             if (currentPlugin instanceof stats_parser_plugin_1.default && result) {
-                this.statsDb.add(result);
+                this.collectStatsDb.add(result);
             }
         });
     }
@@ -664,7 +677,8 @@ class ObserverPC extends base_pc_1.default {
     }
     dispose() {
         this.removeSubscription();
-        this.statsDb.clear();
+        this.collectStatsDb.clear();
+        this.sendStatsDB.clear();
     }
 }
 exports.default = ObserverPC;
@@ -906,8 +920,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const reconnecting_websocket_1 = __importDefault(__webpack_require__(/*! reconnecting-websocket */ "./node_modules/reconnecting-websocket/dist/reconnecting-websocket-mjs.js"));
 const observer_logger_1 = __importDefault(__webpack_require__(/*! ../../../observer.logger */ "./build/observer.logger/index.js"));
+const observer_singleton_1 = __importDefault(__webpack_require__(/*! ../../../observer.singleton */ "./build/observer.singleton/index.js"));
 const time_util_1 = __importDefault(__webpack_require__(/*! ../../../observer.utils/time.util */ "./build/observer.utils/time.util/index.js"));
 const base_plugin_1 = __webpack_require__(/*! ../../base.plugin */ "./build/observer.plugins/base.plugin/index.js");
+const stats_sender_optimize_1 = __importDefault(__webpack_require__(/*! ./stats.sender.optimize */ "./build/observer.plugins/public/websocket.sender.plugin/stats.sender.optimize/index.js"));
 class StatsSender extends base_plugin_1.ObserverPlugin {
     constructor(serverAddress) {
         super();
@@ -923,21 +939,38 @@ class StatsSender extends base_plugin_1.ObserverPlugin {
         this.webSocket = new reconnecting_websocket_1.default(serverAddress, [], options);
     }
     execute(observerPC) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
-            const stats = (_a = observerPC === null || observerPC === void 0 ? void 0 : observerPC.statsDb) === null || _a === void 0 ? void 0 : _a.pool();
+            const previousStats = (_a = observerPC === null || observerPC === void 0 ? void 0 : observerPC.sendStatsDB) === null || _a === void 0 ? void 0 : _a.pool();
+            const currentStats = (_b = observerPC === null || observerPC === void 0 ? void 0 : observerPC.collectStatsDb) === null || _b === void 0 ? void 0 : _b.pool();
+            // apply plugin specific sender optimization
+            const stats = stats_sender_optimize_1.default.getStatsForSending(previousStats, currentStats);
             const samples = {
                 browserId: observerPC === null || observerPC === void 0 ? void 0 : observerPC.browserId,
-                callId: (_b = observerPC === null || observerPC === void 0 ? void 0 : observerPC.userConfig) === null || _b === void 0 ? void 0 : _b.callId,
+                callId: (_c = observerPC === null || observerPC === void 0 ? void 0 : observerPC.userConfig) === null || _c === void 0 ? void 0 : _c.callId,
                 iceStats: stats === null || stats === void 0 ? void 0 : stats.iceStats,
                 peerConnectionId: observerPC === null || observerPC === void 0 ? void 0 : observerPC.id,
                 receiverStats: stats === null || stats === void 0 ? void 0 : stats.receiverStats,
                 senderStats: stats === null || stats === void 0 ? void 0 : stats.senderStats,
                 timeZoneOffsetInMinute: observerPC === null || observerPC === void 0 ? void 0 : observerPC.timeZoneOffsetInMinute,
                 timestamp: time_util_1.default.getCurrent(),
-                userId: (_c = observerPC === null || observerPC === void 0 ? void 0 : observerPC.userConfig) === null || _c === void 0 ? void 0 : _c.userId
+                userId: (_d = observerPC === null || observerPC === void 0 ? void 0 : observerPC.userConfig) === null || _d === void 0 ? void 0 : _d.userId
             };
+            // add last sent stats
+            observerPC.sendStatsDB.add(currentStats);
             yield this.sendMessage(samples);
+        });
+    }
+    sendUserMediaError(errorMessage) {
+        return __awaiter(this, void 0, void 0, function* () {
+            observer_logger_1.default.warn('yaaa!', errorMessage);
+            const sample = {
+                browserId: yield observer_singleton_1.default.getBrowserId(),
+                timeZoneOffsetInMinute: time_util_1.default.getTimeZoneOffsetInMinute(),
+                timestamp: time_util_1.default.getCurrent(),
+                userMediaErrors: [{ message: errorMessage }]
+            };
+            yield this.sendMessage(sample);
         });
     }
     sendMessage(samples) {
@@ -952,6 +985,41 @@ class StatsSender extends base_plugin_1.ObserverPlugin {
     }
 }
 exports.default = StatsSender;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./build/observer.plugins/public/websocket.sender.plugin/stats.sender.optimize/index.js":
+/*!**********************************************************************************************!*\
+  !*** ./build/observer.plugins/public/websocket.sender.plugin/stats.sender.optimize/index.js ***!
+  \**********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const observer_logger_1 = __importDefault(__webpack_require__(/*! ../../../../observer.logger */ "./build/observer.logger/index.js"));
+class SenderOptimizer {
+    static getStatsForSending(previousStats, currentStats) {
+        var _a, _b;
+        const previousIceStats = previousStats === null || previousStats === void 0 ? void 0 : previousStats.iceStats;
+        const currentIceStats = currentStats === null || currentStats === void 0 ? void 0 : currentStats.iceStats;
+        const retval = Object.assign({}, currentStats);
+        if (JSON.stringify(previousIceStats === null || previousIceStats === void 0 ? void 0 : previousIceStats.localCandidates) === JSON.stringify(currentIceStats === null || currentIceStats === void 0 ? void 0 : currentIceStats.localCandidates)) {
+            (_a = currentStats === null || currentStats === void 0 ? void 0 : currentStats.iceStats) === null || _a === void 0 ? true : delete _a.localCandidates;
+        }
+        if (JSON.stringify(previousIceStats === null || previousIceStats === void 0 ? void 0 : previousIceStats.remoteCandidates) === JSON.stringify(currentIceStats === null || currentIceStats === void 0 ? void 0 : currentIceStats.remoteCandidates)) {
+            (_b = currentStats === null || currentStats === void 0 ? void 0 : currentStats.iceStats) === null || _b === void 0 ? true : delete _b.remoteCandidates;
+        }
+        observer_logger_1.default.warn(retval);
+        return retval;
+    }
+}
+exports.default = SenderOptimizer;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -998,6 +1066,45 @@ class ObserverSingleton {
 const observerSingleton = new ObserverSingleton();
 observerSingleton.getBrowserId().catch();
 exports.default = observerSingleton;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./build/observer.usermediahandler/index.js":
+/*!**************************************************!*\
+  !*** ./build/observer.usermediahandler/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class UserMediaHandler {
+    overrideUserMedia(observer) {
+        var _a, _b;
+        if (!((_a = navigator === null || navigator === void 0 ? void 0 : navigator.mediaDevices) === null || _a === void 0 ? void 0 : _a.getUserMedia))
+            return;
+        const origGetUserMedia = (_b = navigator === null || navigator === void 0 ? void 0 : navigator.mediaDevices) === null || _b === void 0 ? void 0 : _b.getUserMedia.bind(navigator === null || navigator === void 0 ? void 0 : navigator.mediaDevices);
+        // tslint:disable-next-line:only-arrow-functions
+        const newGetUserMedia = function () {
+            // @ts-ignore
+            return origGetUserMedia.apply(navigator === null || navigator === void 0 ? void 0 : navigator.mediaDevices, arguments)
+                // @ts-ignore
+                // tslint:disable-next-line:only-arrow-functions
+                .then(function (stream) {
+                return Promise.resolve(stream);
+                // @ts-ignore
+                // tslint:disable-next-line:only-arrow-functions
+            }, function (err) {
+                observer === null || observer === void 0 ? void 0 : observer.sendUserMediaError(err === null || err === void 0 ? void 0 : err.name);
+                return Promise.reject(err);
+            });
+        };
+        navigator.mediaDevices.getUserMedia = newGetUserMedia.bind(navigator.mediaDevices);
+    }
+}
+exports.default = UserMediaHandler;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
