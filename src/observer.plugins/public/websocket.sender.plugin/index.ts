@@ -17,7 +17,7 @@ class StatsSender extends ObserverPlugin {
         }
         const options = {
             connectionTimeout: 5000,
-            debug: true,
+            debug: false,
             maxEnqueuedMessages: 500,
             maxRetries: 50,
         }
