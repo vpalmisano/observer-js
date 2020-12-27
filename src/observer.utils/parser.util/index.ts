@@ -1,8 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class ParserUtil {
-    public static parseWsServerUrl(serverURL: string,
-                                   serviceUUID: string,
-                                   mediaUnitId: string,
-                                   statsVersion: string,
+    public static parseWsServerUrl (
+        serverURL: string,
+        serviceUUID: string,
+        mediaUnitId: string,
+        statsVersion: string
     ): string {
         if (!serverURL) {
             throw Error('server url is undefined')
@@ -17,12 +19,34 @@ class ParserUtil {
             throw Error('stats version is undefined')
         }
 
-        serverURL = `${serverURL.replace(/\/$/, '')}`
-        serviceUUID = `${serviceUUID.replace(/^\//, '')}`
-        mediaUnitId = `${mediaUnitId.replace(/^\//, '')}`
-        statsVersion = `${statsVersion.replace(/^\//, '')}`
+        // eslint-disable-next-line no-param-reassign
+        serverURL = `${serverURL.replace(
+            // eslint-disable-next-line require-unicode-regexp
+            /\/$/,
+            ''
+        )}`
+        // eslint-disable-next-line no-param-reassign
+        serviceUUID = `${serviceUUID.replace(
+            // eslint-disable-next-line require-unicode-regexp
+            /^\//,
+            ''
+        )}`
+        // eslint-disable-next-line no-param-reassign
+        mediaUnitId = `${mediaUnitId.replace(
+            // eslint-disable-next-line require-unicode-regexp
+            /^\//,
+            ''
+        )}`
+        // eslint-disable-next-line no-param-reassign
+        statsVersion = `${statsVersion.replace(
+            // eslint-disable-next-line require-unicode-regexp
+            /^\//,
+            ''
+        )}`
         return `${serverURL}/${serviceUUID}/${mediaUnitId}/${statsVersion}/json`
     }
 }
 
-export default ParserUtil
+export {
+    ParserUtil
+}

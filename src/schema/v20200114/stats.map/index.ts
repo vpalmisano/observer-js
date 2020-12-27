@@ -1,12 +1,18 @@
-import {
+/* eslint-disable */
+import type {
     CandidatePairElement,
     InboundRTPStatElement,
-    LocalCandidateElement, MediaSourceElement, OutboundRTPStatElement,
-    RemoteCandidateElement, RemoteInboundRTPStatElement, TrackElement
+    LocalCandidateElement,
+    MediaSourceElement,
+    OutboundRTPStatElement,
+    RemoteCandidateElement,
+    RemoteInboundRTPStatElement,
+    TrackElement
 } from '../index'
 
-class StatsMap{
-    public static localCandidate(candidate?: any): LocalCandidateElement {
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+class StatsMap {
+    public static localCandidate (candidate?: any): LocalCandidateElement {
         const {
             candidateType,
             deleted,
@@ -34,7 +40,7 @@ class StatsMap{
         } as LocalCandidateElement
     }
 
-    public static remoteCandidate(candidate?: any): RemoteCandidateElement {
+    public static remoteCandidate (candidate?: any): RemoteCandidateElement {
         const {
             candidateType,
             deleted,
@@ -60,7 +66,7 @@ class StatsMap{
         } as RemoteCandidateElement
     }
 
-    public static candidatePair(candidatePair?: any): CandidatePairElement {
+    public static candidatePair (candidatePair?: any): CandidatePairElement {
         const {
             availableOutgoingBitrate,
             bytesReceived,
@@ -104,7 +110,7 @@ class StatsMap{
         } as CandidatePairElement
     }
 
-    public static mediaSource(stats?: any): MediaSourceElement {
+    public static mediaSource (stats?: any): MediaSourceElement {
         const {
             audioLevel,
             framesPerSecond,
@@ -122,15 +128,18 @@ class StatsMap{
             framesPerSecond,
             height,
             id,
-            mediaType: mediaType || stats.kind,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/strict-boolean-expressions,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/prefer-nullish-coalescing
+            'mediaType': mediaType || stats.kind,
             totalAudioEnergy,
             totalSamplesDuration,
-            trackId: trackId || stats.trackIdentifier,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/strict-boolean-expressions,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/prefer-nullish-coalescing
+            'trackId': trackId || stats.trackIdentifier,
             width
         } as MediaSourceElement
     }
 
-    public static inboundRTPStatElement(stats?: any): InboundRTPStatElement {
+    // eslint-disable-next-line max-lines-per-function
+    public static inboundRTPStatElement (stats?: any): InboundRTPStatElement {
         const {
             bytesReceived,
             codecId,
@@ -175,7 +184,8 @@ class StatsMap{
             jitter,
             keyFramesDecoded,
             lastPacketReceivedTimestamp,
-            mediaType: mediaType || stats.kind,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/strict-boolean-expressions,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/prefer-nullish-coalescing
+            'mediaType': mediaType || stats.kind,
             nackCount,
             packetsLost,
             packetsReceived,
@@ -190,7 +200,8 @@ class StatsMap{
         } as InboundRTPStatElement
     }
 
-    public static outboundRTPStatElement(stats?: any): OutboundRTPStatElement {
+    // eslint-disable-next-line max-lines-per-function
+    public static outboundRTPStatElement (stats?: any): OutboundRTPStatElement {
         const {
             bytesSent,
             codecId,
@@ -231,7 +242,8 @@ class StatsMap{
             isRemote,
             keyFramesEncoded,
             mediaSourceId,
-            mediaType: mediaType || stats.kind,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/strict-boolean-expressions,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/prefer-nullish-coalescing
+            'mediaType': mediaType || stats.kind,
             nackCount,
             packetsSent,
             pliCount,
@@ -250,7 +262,7 @@ class StatsMap{
         } as OutboundRTPStatElement
     }
 
-    public static remoteInboundRTPStatElement(stats?: any): RemoteInboundRTPStatElement {
+    public static remoteInboundRTPStatElement (stats?: any): RemoteInboundRTPStatElement {
         const {
             codecId,
             id,
@@ -268,14 +280,17 @@ class StatsMap{
             id,
             jitter,
             localId,
-            mediaType: mediaType || stats.kind,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/strict-boolean-expressions,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/prefer-nullish-coalescing
+            'mediaType': mediaType || stats.kind,
             packetsLost,
             roundTripTime,
             ssrc,
             transportId
         } as RemoteInboundRTPStatElement
     }
-    public static track(stats?: any): TrackElement {
+
+    // eslint-disable-next-line
+    public static track (stats?: any): TrackElement {
         const {
             concealedSamples,
             concealmentEvents,
@@ -312,7 +327,8 @@ class StatsMap{
             jitterBufferDelay,
             jitterBufferEmittedCount,
             mediaSourceId,
-            mediaType: mediaType || stats.kind,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/strict-boolean-expressions,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/prefer-nullish-coalescing
+            'mediaType': mediaType || stats.kind,
             remoteSource,
             removedSamplesForAcceleration,
             samplesDuration,

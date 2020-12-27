@@ -1,18 +1,15 @@
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class TimeUtil {
-    public static getCurrent(): number {
-        if (!window || !window.performance || !window.performance.now) {
-            return Date.now()
-        }
-        if (!window.performance.timing.navigationStart) {
-            return Date.now()
-        }
-        return window.performance.now() + window.performance.timing.navigationStart
+    public static getCurrent (): number {
+        return Date.now()
     }
 
-    public static getTimeZoneOffsetInMinute(): number {
-        const currentTime: number = (new Date()).getTimezoneOffset()
-        return currentTime
+    public static getTimeZoneOffsetInMinute (): number {
+        const timezoneOffset: number = new Date().getTimezoneOffset()
+        return timezoneOffset
     }
 }
 
-export default TimeUtil
+export {
+    TimeUtil
+}

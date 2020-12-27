@@ -1,31 +1,44 @@
 import * as Logger from 'loglevel'
 
-// @ts-ignore
-const debug = DEBUG === true
-function initLogger(name: string, prefix: any) {
-    const result = Logger.getLogger(name)
-    if (debug) {
-        result.enableAll()
-    } else {
-        result.setLevel(4)
-    }
+// @ts-expect-error Will be injected in build time
+const isDebug = __isDebug__ === true
+const initLogger = (prefix: string, dev = true): Logger.Logger => {
+        // eslint-disable-next-line no-underscore-dangle
+        const _logger = Logger.getLogger(prefix)
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+        _logger.methodFactory = (
+            methodName: string,
+            logLevel: Logger.LogLevelNumbers,
+            loggerName: string
+        ) => {
+            const originalFactory = Logger.methodFactory,
+                rawMethod = originalFactory(
+                    methodName,
+                    logLevel,
+                    loggerName
+                )
+            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type,func-names
+            return function () {
+                rawMethod(
+                    `${prefix} ${new Date().toUTCString()}`,
+                    // eslint-disable-next-line prefer-rest-params
+                    ...arguments
+                )
+            }
+        }
+        if (dev) {
+            _logger.enableAll()
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+            _logger.setLevel(4)
+        }
+        return _logger
+    },
 
-    if (!prefix) return result
-    // @ts-ignore
-    result.prefix = prefix
-    const original = {
-        debug: result.debug.bind(result),
-        error: result.error.bind(result),
-        info: result.info.bind(result),
-        trace: result.trace.bind(result),
-        warn: result.warn.bind(result),
-    }
-    result.trace = (...args) => original.trace((typeof prefix === 'function' ? prefix() : prefix), ...args)
-    result.debug = (...args) => original.debug((typeof prefix === 'function' ? prefix() : prefix), ...args)
-    result.info = (...args) => original.info((typeof prefix === 'function' ? prefix() : prefix), ...args)
-    result.warn = (...args) => original.warn((typeof prefix === 'function' ? prefix() : prefix), ...args)
-    result.error = (...args) => original.error((typeof prefix === 'function' ? prefix() : prefix), ...args)
-    return result
+    logger = initLogger(
+        'ObserverRTC',
+        isDebug
+    )
+export {
+    logger
 }
-const logger = initLogger('ObserverRTC', () => `${new Date().toISOString()}`)
-export default logger
