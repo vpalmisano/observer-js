@@ -58,7 +58,7 @@
   "scripts": {
     "build": "rollup --config rollup.api.config.js && rollup --config rollup.worker.config.js",
     "build-dev": "rollup --config rollup.api.config.js && rollup --config rollup.worker.config.js",
-    "publish": "rimraf dist/v* && npm run build && npm run build-dev",
+    "publish": "npm run build && npm run build-dev",
     "lint": "eslint --ext .ts .",
     "lint:fix": "yarn lint --fix",
     "test": "jest"
