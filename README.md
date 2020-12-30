@@ -18,20 +18,6 @@ Extractor Development Toolkits for WebRTC Samples
 
 ### You can just use the latest version of the library from GitHub directly in your HTML/JavaScript
 
-- Old version that does not use WebWorker(s).
-  - Developer version 
-  
-  ```html
-  <script src="https://observertc.github.io/observer-js/dist/observer.js"></script>
-  ```
-  
-  - Production version
-  
-  ```html
-  <script src="https://observertc.github.io/observer-js/dist/observer.min.js"></script>
-  ```
-  
-- New version that use WebWorker. It's recommend using this version
   - Developer version
 
   ```html
