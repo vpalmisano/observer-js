@@ -6,9 +6,39 @@
  *   const peerConnectionSample = Convert.toPeerConnectionSample(json);
  */
 
+export interface MediaDeviceInfo {
+    deviceId?: string;
+    groupId?: string;
+    kind?: 'videoinput' | 'audioinput' | 'audiooutput';
+    label?: string;
+}
+
+export interface ClientDetails {
+    browser: {
+        name?: string;
+        version?: string;
+    };
+    os: {
+        name?: string;
+        version?: string;
+        versionName?: string;
+    };
+    platform: {
+        type?: string;
+        vendor?: string;
+        model?: string;
+    };
+    engine: {
+        name?: string;
+        version?: string;
+    };
+}
+
 export interface PeerConnectionSample {
     browserId?: string;
+    clientDetails?: ClientDetails;
     callId?: string;
+    deviceList?: MediaDeviceInfo[];
     iceStats?: IceStats;
     peerConnectionId?: string;
     receiverStats?: ReceiverStats;
@@ -267,7 +297,7 @@ export interface UserMediaError {
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class Convert {
     public static toPeerConnectionSample (json: string): PeerConnectionSample {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return,max-lines
         return JSON.parse(json)
     }
 

@@ -73,6 +73,8 @@ class ObserverProcessor implements WorkerCallback {
             const payload = {
                 'browserId': currentStats.details.browserId,
                 'callId': currentStats.details.callId,
+                'clientDetails': currentStats.details.clientDetails,
+                'deviceList': currentStats.details.deviceList,
                 'iceStats': RawStatsProcessor.getIceStats(currentStats.stats),
                 'peerConnectionId': currentStats.details.peerConnectionId,
                 'receiverStats': RawStatsProcessor.getSendRecvStats(currentStats.stats.receiverStats as SendRecv[]),
@@ -95,6 +97,8 @@ class ObserverProcessor implements WorkerCallback {
     onUserMediaError (mediaError: UserMediaErrorPayload): void {
         const socketPayloads: PeerConnectionSample = {
             'browserId': mediaError.details.browserId,
+            'clientDetails': mediaError.details.clientDetails,
+            'deviceList': mediaError.details.deviceList,
             'timeZoneOffsetInMinute': mediaError.details.timeZoneOffsetInMinute,
             'timestamp': mediaError.details.timestamp,
             'userMediaErrors': [{'message': mediaError.errName} as UserMediaError]

@@ -2217,7 +2217,7 @@
             this._collector = new RTCCollector();
             this._collectorWorker = new CollectorWorker(
             // @ts-expect-error Will be injected in build time
-            "https://observertc.github.io/observer-js/dist/latest/observer.worker.js", this);
+            "https://observertc.github.io/observer-js/dist/v0.6.1/observer.worker.js", this);
             this.addPC = this.addPC.bind(this);
             this.removePC = this.removePC.bind(this);
             this.setIntegration = this.setIntegration.bind(this);

@@ -2,6 +2,9 @@ import {
     observerSingleton
 } from '../../observer.singleton'
 import {
+    BrowserUtil
+} from '../../observer.utils/browser.util'
+import {
     TimeUtil
 } from '../../observer.utils/time.util'
 import type {
@@ -32,6 +35,8 @@ class RTCCollector {
         return {
             'details': {
                 'browserId': await observerSingleton.getBrowserId(),
+                'clientDetails': BrowserUtil.getClientDetails(),
+                'deviceList': await BrowserUtil.getDeviceList(),
                 'timeZoneOffsetInMinute': TimeUtil.getTimeZoneOffsetInMinute(),
                 'timestamp': TimeUtil.getCurrent()
             },
