@@ -22,8 +22,13 @@ export interface UserMediaErrorPayload {
 }
 
 class RTCCollector {
+    private marker?: string
     constructor () {
         this.collect = this.collect.bind(this)
+    }
+
+    public updateMarker (marker: string): void {
+        this.marker = marker
     }
 
     public async collect (rtcList: ObserverPC[]): Promise<RawStats[]> {
@@ -37,6 +42,7 @@ class RTCCollector {
                 'browserId': await observerSingleton.getBrowserId(),
                 'clientDetails': BrowserUtil.getClientDetails(),
                 'deviceList': await BrowserUtil.getDeviceList(),
+                'marker': this.marker,
                 'timeZoneOffsetInMinute': TimeUtil.getTimeZoneOffsetInMinute(),
                 'timestamp': TimeUtil.getCurrent()
             },
@@ -46,7 +52,7 @@ class RTCCollector {
 
     private async collectStats (observerPc: ObserverPC): Promise<RawStats> {
         const stats = await observerPc.getStats()
-        const {pcDetails} = observerPc
+        const pcDetails = observerPc.getPcDetails(this.marker)
         return {
             'details': pcDetails,
             stats

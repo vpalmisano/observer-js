@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*
  * To parse this data:
  *
@@ -47,6 +49,7 @@ export interface PeerConnectionSample {
     timestamp: number;
     timeZoneOffsetInMinute?: number;
     userId?: string;
+    marker?: string;
 }
 
 export interface IceStats {
