@@ -7,13 +7,13 @@
   "config": {
     "development": {
       "_workerLoadEndpoint": "http://localhost:9090/js/dist",
-      "workerLoadEndpoint": "https://raw.githubusercontent.com/vpalmisano/observer-js/master/dist",
+      "workerLoadEndpoint": "https://cdn.jsdelivr.net/gh/vpalmisano/observer-js@master/dist",
       "collectorLibraryFileName": "observer.js",
       "workerLibraryFileName": "observer.worker.js"
     },
     "production": {
       "_workerLoadEndpoint": "http://localhost:9090/js/dist",
-      "workerLoadEndpoint": "https://raw.githubusercontent.com/vpalmisano/observer-js/master/dist",
+      "workerLoadEndpoint": "https://cdn.jsdelivr.net/gh/vpalmisano/observer-js@master/dist",
       "collectorLibraryFileName": "observer.min.js",
       "workerLibraryFileName": "observer.worker.min.js"
     },
